@@ -1,0 +1,1466 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>RoboticArm3Dof</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-09-11"><meta name="DC.source" content="RoboticArm3Dof.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">--- Funzione di apertura. viene cariata prima ancora che RoboticArm3Dof inizi</a></li><li><a href="#6">funzione necessaria per la calibrazione iniziale dei motori</a></li><li><a href="#9">--- Sposta i motori verso le cordinate XYZ descritte nello stesso pannello</a></li><li><a href="#12">--- Imposta i valori dei theta a quelli decritti e sposta il motore</a></li><li><a href="#15">scrive i valori correnti degli angoli correnti sulla gui</a></li><li><a href="#18">setta valori correnti o teorici sulla gui in base al tipo passato</a></li><li><a href="#21">setta gli errori sulla gui</a></li><li><a href="#24">setta gli angoli del braccio che sta sulla simulazione grazie agli angoli in radianti precedentemente scelti</a></li><li><a href="#27">muove i motori grazie al calcolo della differenza fra angoli correnti e</a></li><li><a href="#30">manda un impulso al driver A4998 che equivale ad uno step del motore</a></li><li><a href="#33">--- Permette la connessione fra raspberry e computer</a></li><li><a href="#36">richiamata quando viene premuto il pulsante di calibrazione dei motori</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = RoboticArm3Dof(varargin)
+</pre><pre class="codeinput"><span class="comment">% ROBOTICARM3DOF MATLAB code for RoboticArm3Dof.fig</span>
+<span class="comment">%      ROBOTICARM3DOF, by itself, creates a new ROBOTICARM3DOF or raises the existing</span>
+<span class="comment">%      singleton*.</span>
+<span class="comment">%</span>
+<span class="comment">%      H = ROBOTICARM3DOF returns the handle to a new ROBOTICARM3DOF or the handle to</span>
+<span class="comment">%      the existing singleton*.</span>
+<span class="comment">%</span>
+<span class="comment">%      ROBOTICARM3DOF('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+<span class="comment">%      function named CALLBACK in ROBOTICARM3DOF.M with the given input arguments.</span>
+<span class="comment">%</span>
+<span class="comment">%      ROBOTICARM3DOF('Property','Value',...) creates a new ROBOTICARM3DOF or raises the</span>
+<span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+<span class="comment">%      applied to the GUI before RoboticArm3Dof_OpeningFcn gets called.  An</span>
+<span class="comment">%      unrecognized property name or invalid value makes property application</span>
+<span class="comment">%      stop.  All inputs are passed to RoboticArm3Dof_OpeningFcn via varargin.</span>
+<span class="comment">%</span>
+<span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one</span>
+<span class="comment">%      instance to run (singleton)".</span>
+<span class="comment">%</span>
+<span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+
+<span class="comment">% Edit the above text to modify the response to help RoboticArm3Dof</span>
+
+<span class="comment">% Last Modified by GUIDE v2.5 17-Aug-2018 13:20:15</span>
+
+<span class="comment">% Begin initialization code - DO NOT EDIT</span>
+gui_Singleton = 1;
+gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+                   <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+                   <span class="string">'gui_OpeningFcn'</span>, @RoboticArm3Dof_OpeningFcn, <span class="keyword">...</span>
+                   <span class="string">'gui_OutputFcn'</span>,  @RoboticArm3Dof_OutputFcn, <span class="keyword">...</span>
+                   <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+                   <span class="string">'gui_Callback'</span>,   []);
+<span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+<span class="keyword">else</span>
+    gui_mainfcn(gui_State, varargin{:});
+<span class="keyword">end</span>
+<span class="comment">% End initialization code - DO NOT EDIT</span>
+</pre><h2 id="3">--- Funzione di apertura. viene cariata prima ancora che RoboticArm3Dof inizi</h2><pre class="codeinput"><span class="keyword">function</span> RoboticArm3Dof_OpeningFcn(hObject, eventdata, handles, varargin)
+</pre><pre class="codeinput"><span class="comment">% This function has no output args, see OutputFcn.</span>
+<span class="comment">% hObject    handle to figure</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="comment">% varargin   command line arguments to RoboticArm3Dof (see VARARGIN)</span>
+ <span class="keyword">global</span> piConnected
+ piConnected = false;
+
+ <span class="keyword">global</span> oldTheta;
+ oldTheta = [ 0 0 0];
+
+open(<span class="string">'simulazioneBraccio'</span>);
+<span class="comment">% Choose default command line output for RoboticArm3Dof</span>
+handles.output = hObject;
+
+<span class="comment">% Update handles structure</span>
+guidata(hObject, handles);
+
+<span class="comment">% UIWAIT makes RoboticArm3Dof wait for user response (see UIRESUME)</span>
+<span class="comment">% uiwait(handles.figure1);</span>
+</pre><h2 id="6">funzione necessaria per la calibrazione iniziale dei motori</h2><pre class="codeinput"><span class="keyword">function</span> calibraMotori() <span class="comment">%----------------------------Calibrazione motori----------------------------------</span>
+<span class="keyword">global</span> oldTheta;
+<span class="keyword">global</span> finecorsa;
+<span class="keyword">global</span> pi;
+<span class="keyword">global</span> MotoreSpalla;
+<span class="keyword">global</span> MotoreGomito;
+<span class="keyword">global</span> MotorePolso;
+<span class="keyword">global</span> stepAngle;
+
+writeDigitalPin(pi,MotoreSpalla.(<span class="string">'dir'</span>),1);
+writeDigitalPin(pi,MotoreGomito.(<span class="string">'dir'</span>),0);
+writeDigitalPin(pi,MotorePolso.(<span class="string">'dir'</span>),0);
+
+
+<span class="comment">% --------------trovo un punto conosciuto per il polso--------------</span>
+<span class="keyword">while</span>(readDigitalPin(pi,finecorsa(3))~=0)
+    stepMotore(pi,MotorePolso.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+disp(<span class="string">'raggiunto fine polso'</span>);
+pause(1);
+
+writeDigitalPin(pi,MotorePolso.(<span class="string">'dir'</span>),1);
+<span class="keyword">for</span> i=0:int16(55/stepAngle)
+    stepMotore(pi,MotorePolso.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+
+pause(2);
+
+<span class="comment">%--------------trovo un punto conosciuto per il gomito--------------</span>
+<span class="keyword">while</span>(readDigitalPin(pi,finecorsa(2))~=0)
+    stepMotore(pi,MotoreGomito.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+disp(<span class="string">'raggiunto fine gomito'</span>);
+pause(1);
+
+writeDigitalPin(pi,MotoreGomito.(<span class="string">'dir'</span>),1);
+<span class="keyword">for</span> i=0:int16(65/stepAngle)
+    stepMotore(pi,MotoreGomito.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+<span class="keyword">for</span> i=0:int16(90/stepAngle)
+    stepMotore(pi,MotorePolso.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+
+pause(2);
+
+
+
+<span class="comment">%------trovo un punto conosciuto della struttura di base - spalla----------</span>
+<span class="keyword">while</span>(readDigitalPin(pi,finecorsa(1))~=0)
+    stepMotore(pi,MotoreSpalla.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+disp(<span class="string">'raggiunto fine base'</span>);
+pause(1)
+<span class="comment">%riporto la base alla posizione 0</span>
+writeDigitalPin(pi,MotoreSpalla.(<span class="string">'dir'</span>),0);
+<span class="keyword">for</span> i=0:int16(180/stepAngle)
+    stepMotore(pi,MotoreSpalla.(<span class="string">'step'</span>));
+<span class="keyword">end</span>
+
+disp(<span class="string">'fine calibrazione'</span>);
+
+oldTheta = [0 0 0]; <span class="comment">% posizione iniziale dei motori</span>
+
+settaAngoliSimulazione(0,0,0);
+
+
+
+<span class="comment">% --- Outputs from this function are returned to the command line.</span>
+<span class="keyword">function</span> varargout = RoboticArm3Dof_OutputFcn(hObject, eventdata, handles)
+</pre><pre class="codeinput"><span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+<span class="comment">% hObject    handle to figure</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Get default command line output from handles structure</span>
+varargout{1} = handles.output;
+</pre><h2 id="9">--- Sposta i motori verso le cordinate XYZ descritte nello stesso pannello</h2><pre class="codeinput"><span class="keyword">function</span> SpostaButton_Callback(hObject, eventdata, handles)
+</pre><pre class="codeinput"><span class="comment">% hObject    handle to SpostaButton (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="keyword">global</span> a2;
+<span class="keyword">global</span> a3;
+<span class="keyword">global</span> oldTheta;
+<span class="keyword">global</span> piConnected;
+a2 = 10;
+a3 = 12;
+
+<span class="comment">%prendo i valori delle entry</span>
+newX = get(handles.CordinataX,<span class="string">'String'</span>);
+newY = get(handles.CordinataY,<span class="string">'String'</span>);
+newZ = get(handles.CordinataZ,<span class="string">'String'</span>);
+
+newPoint = [ str2double(newX)  str2double(newY)  -str2double(newZ)]; <span class="comment">%scrive il nuovo punto in cui spostarsi</span>
+
+checkNAN = isnan(newPoint); <span class="comment">% serve a determinare se nel nuovo punto ci sono solo numeri</span>
+
+<span class="comment">%controllo e scrivo i valori nel nuovo punto da raggiungere</span>
+<span class="keyword">if</span>(not(piConnected))
+
+    set(handles.errText,<span class="string">'String'</span>,<span class="string">'ERROR: Connessione non stabilita -&gt; Devi connettere la raspberry al computer per poter impostare dei valori'</span>);
+
+<span class="keyword">elseif</span> checkNAN==0 <span class="comment">% determina se sono tutti numeri</span>
+    set(handles.errText,<span class="string">'String'</span>, <span class="string">'Error Text'</span>);
+
+   <span class="comment">%CINEMATICA INVERSA</span>
+   <span class="keyword">try</span>
+        c3= (newPoint(1)^2 + newPoint(2)^2 + newPoint(3)^2 - a2^2 - a3^2)/(2*a2*a3);
+        s3= sqrt(1 - c3^2);
+        s2=((a2+a3*c3)*newPoint(3) - a3*s3*sqrt(newPoint(1)^2 + newPoint(2)^2))/(newPoint(1)^2 + newPoint(2)^2 + newPoint(3)^2);
+        c2=((a2+a3*c3)* sqrt(newPoint(1)^2 + newPoint(2)^2) + a3 * s3 *newPoint(3))/(newPoint(1)^2 + newPoint(2)^2 + newPoint(3)^2);
+
+        theta1Radians = atan2(newPoint(2),newPoint(1));
+        theta3Radians = atan2(s3,c3);
+        theta2Radians = atan2(s2,c2);
+
+        theta1Deg = rad2deg(theta1Radians);
+        theta2Deg = rad2deg(theta2Radians);
+        theta3Deg = rad2deg(theta3Radians);
+
+        newTheta = [ theta1Deg theta2Deg theta3Deg ];
+
+        differenzaTheta = newTheta - oldTheta;
+        muoviMotori(differenzaTheta);
+
+        <span class="comment">%stampo i valori corrente sull'interfaccia grafica</span>
+        set(handles.teorTheta1,<span class="string">'String'</span>, newTheta(1));
+        set(handles.teorTheta2,<span class="string">'String'</span>, newTheta(2));
+        set(handles.teorTheta3,<span class="string">'String'</span>, newTheta(3));
+
+        set(handles.teorX,<span class="string">'String'</span>, newPoint(1));
+        set(handles.teorY,<span class="string">'String'</span>, newPoint(2));
+        set(handles.teorZ,<span class="string">'String'</span>, newPoint(3));
+
+        settaCurrentValues(handles, differenzaTheta);
+
+        settaErr(handles);
+
+        <span class="comment">%cambia la simulazione per vedere se il punto nello spazio</span>
+        <span class="comment">%corrisponde a quello reale</span>
+
+        settaAngoliSimulazione(theta1Radians,theta2Radians,theta3Radians);
+
+    <span class="keyword">catch</span>
+
+        errorMsgText = <span class="string">'ERROR: punto irraggiungibile -&gt; punto fuori dallo spazio di lavoro del braccio'</span>;
+        set(handles.errText, <span class="string">'String'</span>, errorMsgText);
+    <span class="keyword">end</span>
+
+<span class="keyword">else</span>
+    set(handles.errText,<span class="string">'String'</span>,<span class="string">'ERROR: valore non numerico -&gt; devi mettere valori numerici entro le caselle: X Y Z'</span>);
+<span class="keyword">end</span>
+</pre><h2 id="12">--- Imposta i valori dei theta a quelli decritti e sposta il motore</h2><p>verso quel punto</p><pre class="codeinput"><span class="keyword">function</span> ImpostaButton_Callback(hObject, eventdata, handles)
+</pre><pre class="codeinput"><span class="comment">% hObject    handle to ImpostaButton (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+
+<span class="keyword">global</span> oldTheta;
+<span class="keyword">global</span> piConnected;
+
+newTheta1 = get(handles.Theta1edit, <span class="string">'String'</span>);
+newTheta2 = get(handles.Theta2edit, <span class="string">'String'</span>);
+newTheta3 = get(handles.Theta3edit, <span class="string">'String'</span>);
+
+newTheta = [ str2double(newTheta1)  str2double(newTheta2)  str2double(newTheta3)]; <span class="comment">%scrive il nuovo punto in cui spostarsi</span>
+
+checkNAN = isnan(newTheta); <span class="comment">% controlla se nella conversione dei numeri c'&egrave; un NotANumber ovvero non &egrave; un numero</span>
+
+<span class="keyword">if</span>(not(piConnected))
+
+    set(handles.errText,<span class="string">'String'</span>,<span class="string">'ERROR: Connessione non stabilita -&gt; Devi connettere la raspberry al computer per poter impostare dei valori'</span>);
+
+<span class="keyword">elseif</span>  checkNAN==0  <span class="comment">% determina se sono tutti numeri</span>
+    checkSpace = newTheta(1)&gt;=-180 &amp;&amp; newTheta(1)&lt;= 180 &amp;&amp; newTheta(2)&gt;=-225 &amp;&amp; newTheta(2)&lt;= 45 &amp;&amp; newTheta(3)&gt;=-135 &amp;&amp; newTheta(3)&lt;= 135; <span class="comment">% controlla chje gli angoli sianop fra 360 e -360</span>
+    <span class="keyword">if</span> checkSpace
+        set(handles.errText,<span class="string">'String'</span>, <span class="string">'Error Text'</span>);
+
+       thetaDifference = newTheta - oldTheta;
+       muoviMotori(thetaDifference); <span class="comment">% fa muovere i morori grazie alla differenza degli angoli</span>
+
+        <span class="comment">%stampo il valore corrente sull'interfaccia grafica</span>
+        set(handles.teorTheta1,<span class="string">'String'</span>, newTheta(1));
+        set(handles.teorTheta2,<span class="string">'String'</span>, newTheta(2));
+        set(handles.teorTheta3,<span class="string">'String'</span>, newTheta(3));
+
+        <span class="comment">%setta gli angoli della simulaizione del braccio</span>
+        settaAngoliSimulazione(newTheta(1)*2*pi/360, newTheta(2)*2*pi/360,newTheta(3)*2*pi/360);
+
+        <span class="comment">%scrive i valori del punto raggiunto in teoria sulla gui</span>
+        settaPuntoXYZ(handles,newTheta,<span class="string">'teor'</span>)
+
+        <span class="comment">%setta i valori correnti sulla gui</span>
+        settaCurrentValues(handles,thetaDifference);
+
+        <span class="comment">%setta i valori degli errori sulla gui</span>
+        settaErr(handles);
+
+    <span class="keyword">else</span>
+        set(handles.errText,<span class="string">'String'</span>,<span class="string">'ERROR: Bound superato -&gt; il valore dei theta deve essere compreso fra i -180 e 180 gradi per theta1, -225 e 45 per theta2 e -90 e 90 per theta3.'</span>);
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    set(handles.errText,<span class="string">'String'</span>,<span class="string">'ERROR: valore non numerico -&gt; devi mettere valori numerici entro le caselle: Theta1 Theta2 Theta3'</span>);
+<span class="keyword">end</span>
+</pre><h2 id="15">scrive i valori correnti degli angoli correnti sulla gui</h2><pre class="codeinput"><span class="keyword">function</span> settaCurrentValues(handles,thetaDifference)
+</pre><pre class="codeinput"><span class="keyword">global</span> stepAngle;
+<span class="keyword">global</span> oldTheta;
+
+<span class="comment">%calcolo numero degli step</span>
+numStep = int16(thetaDifference/stepAngle);
+
+<span class="comment">% trovo gli angoli finali correnti</span>
+finalTheta = oldTheta + (double(numStep)*stepAngle);
+disp(numStep);
+disp(finalTheta);
+<span class="comment">% setto i valori degli angoli su schermo</span>
+set(handles.currTheta1,<span class="string">'String'</span>,finalTheta(1));
+set(handles.currTheta2,<span class="string">'String'</span>,finalTheta(2));
+set(handles.currTheta3,<span class="string">'String'</span>,finalTheta(3));
+
+<span class="comment">% aggiorno il valore di old theta</span>
+oldTheta = finalTheta;
+<span class="comment">%infine calcolo i valori finali correnti dei punti</span>
+settaPuntoXYZ(handles, finalTheta,<span class="string">'curr'</span>)
+</pre><h2 id="18">setta valori correnti o teorici sulla gui in base al tipo passato</h2><pre class="codeinput"><span class="keyword">function</span> settaPuntoXYZ(handles,theta, tipo)
+</pre><pre class="codeinput"><span class="keyword">global</span> a2;
+<span class="keyword">global</span> a3;
+
+theta = theta * 2*pi /360;
+
+x = cos(theta(1))*(a2*cos(theta(2)) + a3 *cos(theta(2)+theta(3)));
+y = sin(theta(1))*(a2*cos(theta(2)) + a3 *cos(theta(2)+theta(3)));
+z = a2* sin(theta(2)) + a3 * sin(theta(2)+theta(3));
+
+<span class="keyword">if</span>(strcmp(tipo,<span class="string">'teor'</span>))
+
+    set(handles.teorX,<span class="string">'String'</span>, x);
+    set(handles.teorY,<span class="string">'String'</span>, y);
+    set(handles.teorZ,<span class="string">'String'</span>, z);
+
+<span class="keyword">elseif</span>(strcmp(tipo,<span class="string">'curr'</span>))
+
+    set(handles.currX,<span class="string">'String'</span>, x);
+    set(handles.currY,<span class="string">'String'</span>, y);
+    set(handles.currZ,<span class="string">'String'</span>, z);
+
+<span class="keyword">else</span>
+    set(handles.errText, <span class="string">'String'</span>, <span class="string">'ERRORE: tipo non specificato -&gt; la tipologia di dato potrebbe non essere stata specificata correttamente nel codice o potrebbe essere assente'</span>);
+<span class="keyword">end</span>
+</pre><h2 id="21">setta gli errori sulla gui</h2><pre class="codeinput"><span class="keyword">function</span> settaErr(handles)
+</pre><pre class="codeinput">    <span class="comment">% prendo i valori correnti da quelli stampati su schermo</span>
+    currTheta = [str2double(get(handles.currTheta1,<span class="string">'String'</span>)) str2double(get(handles.currTheta2,<span class="string">'String'</span>)) str2double(get(handles.currTheta3,<span class="string">'String'</span>))];
+    currXYZ = [str2double(get(handles.currX,<span class="string">'String'</span>)) str2double(get(handles.currY,<span class="string">'String'</span>)) str2double(get(handles.currZ,<span class="string">'String'</span>))];
+    teorTheta = [str2double(get(handles.teorTheta1,<span class="string">'String'</span>)) str2double(get(handles.teorTheta2,<span class="string">'String'</span>)) str2double(get(handles.teorTheta3,<span class="string">'String'</span>))];
+    teorXYZ = [str2double(get(handles.teorX,<span class="string">'String'</span>)) str2double(get(handles.teorY,<span class="string">'String'</span>)) str2double(get(handles.teorZ,<span class="string">'String'</span>))];
+
+    <span class="comment">%calcolo la differenza (il valore di riferimento &egrave; quello teorico, ovviamente)</span>
+    finalErrTheta = currTheta - teorTheta;
+    finalErrXYZ = currXYZ - teorXYZ;
+
+    <span class="comment">%stampo gli errori su schermo</span>
+    set(handles.errTheta1,<span class="string">'String'</span>,finalErrTheta(1));
+    set(handles.errTheta2,<span class="string">'String'</span>,finalErrTheta(2));
+    set(handles.errTheta3,<span class="string">'String'</span>,finalErrTheta(3));
+    set(handles.errX,<span class="string">'String'</span>,finalErrXYZ(1));
+    set(handles.errY,<span class="string">'String'</span>,finalErrXYZ(2));
+    set(handles.errZ,<span class="string">'String'</span>,finalErrXYZ(3));
+
+    <span class="comment">%scrivo i dati degli errori su due file per le statistiche</span>
+
+    <span class="comment">%errori di theta</span>
+    fidTheta = fopen(<span class="string">'thetaErrors.txt'</span>,<span class="string">'a+'</span>);
+    fprintf(fidTheta,<span class="string">'%3.4f\t%3.4f\t%3.4f\n'</span>,finalErrTheta(1),finalErrTheta(2),finalErrTheta(3));
+    fclose(fidTheta);
+
+    <span class="comment">%errori di XYZ</span>
+    fidXYZ = fopen(<span class="string">'xyzErrors.txt'</span>,<span class="string">'a+'</span>);
+    fprintf(fidXYZ,<span class="string">'%3.4f\t%3.4f\t%3.4f\n'</span>,finalErrXYZ(1),finalErrXYZ(2),finalErrXYZ(3));
+    fclose(fidXYZ);
+</pre><h2 id="24">setta gli angoli del braccio che sta sulla simulazione grazie agli angoli in radianti precedentemente scelti</h2><pre class="codeinput"><span class="keyword">function</span> settaAngoliSimulazione(theta1Radians,theta2Radians,theta3Radians)
+</pre><pre class="codeinput">        set_param(<span class="string">'simulazioneBraccio/theta1'</span>,<span class="string">'Value'</span>,num2str(theta1Radians));
+        set_param(<span class="string">'simulazioneBraccio/theta2'</span>,<span class="string">'Value'</span>,num2str(theta2Radians));
+        set_param(<span class="string">'simulazioneBraccio/theta3'</span>,<span class="string">'Value'</span>,num2str(theta3Radians));
+
+        sim(<span class="string">'simulazioneBraccio'</span>);
+</pre><h2 id="27">muove i motori grazie al calcolo della differenza fra angoli correnti e</h2><p>nuovi</p><pre class="codeinput"><span class="keyword">function</span> muoviMotori(thetaDifference)
+</pre><pre class="codeinput"><span class="keyword">global</span> pi;
+<span class="keyword">global</span> MotoreSpalla;
+<span class="keyword">global</span> MotoreGomito;
+<span class="keyword">global</span> MotorePolso;
+<span class="keyword">global</span> stepAngle;
+
+
+numStep = int16(thetaDifference / stepAngle);
+
+<span class="comment">% ---------impostazione direzione motore---------</span>
+<span class="comment">% MOTORE BASE</span>
+<span class="keyword">if</span> numStep(1)&gt;=0
+    writeDigitalPin(pi,MotoreSpalla.(<span class="string">'dir'</span>),1);
+<span class="keyword">else</span>
+    numStep(1) = -numStep(1);
+    writeDigitalPin(pi,MotoreSpalla.(<span class="string">'dir'</span>),0);
+<span class="keyword">end</span>
+
+<span class="comment">% MOTORE GOMITO</span>
+<span class="keyword">if</span> numStep(2)&gt;=0
+    writeDigitalPin(pi,MotoreGomito.(<span class="string">'dir'</span>),0);
+<span class="keyword">else</span>
+    numStep(2) = -numStep(2);
+    writeDigitalPin(pi,MotoreGomito.(<span class="string">'dir'</span>),1);
+<span class="keyword">end</span>
+
+<span class="comment">% MOTORE POLSO</span>
+<span class="keyword">if</span> numStep(3)&gt;=0
+    writeDigitalPin(pi,MotorePolso.(<span class="string">'dir'</span>),1);
+<span class="keyword">else</span>
+    numStep(3) = -numStep(3);
+    writeDigitalPin(pi,MotorePolso.(<span class="string">'dir'</span>),0);
+<span class="keyword">end</span>
+pause(1);
+<span class="comment">% % -----Spostamento motori non contemporaneo-----</span>
+<span class="comment">% %spostamento motore</span>
+<span class="comment">%  for i=0:numStep(1)</span>
+<span class="comment">%      stepMotore(pi,MotoreSpalla.('step'));</span>
+<span class="comment">%  end</span>
+<span class="comment">%</span>
+<span class="comment">% %spostamento motore</span>
+<span class="comment">% for i=0:numStep(2)</span>
+<span class="comment">%     stepMotore(pi,MotoreGomito.('step'));</span>
+<span class="comment">% end</span>
+<span class="comment">%</span>
+<span class="comment">% %spostamento motore</span>
+<span class="comment">% for i=0:numStep(3)</span>
+<span class="comment">%     stepMotore(pi,MotorePolso.('step'));</span>
+<span class="comment">% end</span>
+
+<span class="comment">% ------movimento dei motori in contemporanea---------</span>
+<span class="keyword">while</span> (numStep(1)~=0 || numStep(2)~=0 || numStep(3) ~= 0)
+    <span class="keyword">if</span> numStep(1) ~= 0
+        stepMotore(pi,MotoreSpalla.(<span class="string">'step'</span>));
+        numStep(1)= numStep(1)-1;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> numStep(2) ~= 0
+        stepMotore(pi,MotoreGomito.(<span class="string">'step'</span>));
+        numStep(2) = numStep(2)-1;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> numStep(3) ~= 0
+        stepMotore(pi,MotorePolso.(<span class="string">'step'</span>));
+        numStep(3) = numStep(3)-1;
+    <span class="keyword">end</span>
+    disp(numStep)
+<span class="keyword">end</span>
+</pre><h2 id="30">manda un impulso al driver A4998 che equivale ad uno step del motore</h2><pre class="codeinput"><span class="keyword">function</span> stepMotore(pi,pinStep)
+</pre><pre class="codeinput">   <span class="keyword">global</span> delay
+
+   writeDigitalPin(pi,pinStep,1);
+   pause(delay/12);
+   writeDigitalPin(pi,pinStep,0);
+   pause(delay/12);
+</pre><h2 id="33">--- Permette la connessione fra raspberry e computer</h2><pre class="codeinput"><span class="keyword">function</span> RaspConnection_Callback(hObject, eventdata, handles)
+</pre><pre class="codeinput"><span class="comment">% hObject    handle to RaspConnection (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+clear <span class="string">pi</span>;
+
+<span class="keyword">global</span> piConnected; <span class="comment">% variabile d'appoggio per controllare se la raspberry &egrave; connessa</span>
+<span class="keyword">global</span> MS; <span class="comment">% Array per decidere la modalit&agrave; di stepping dello stepper motor</span>
+<span class="keyword">global</span> finecorsa; <span class="comment">% array contenente i pin di collegamento dei sensori di finecorsa necessari alla calibrazione dei motori</span>
+
+<span class="keyword">global</span> MotoreSpalla;
+<span class="keyword">global</span> MotoreGomito;
+<span class="keyword">global</span> MotorePolso;
+
+<span class="keyword">global</span> pi; <span class="comment">% connessione alla raspberry</span>
+<span class="keyword">global</span> delay; <span class="comment">%ritardo per step ovvero per creare l'impulso</span>
+<span class="keyword">global</span> stepAngle; <span class="comment">% angolo di giro</span>
+<span class="keyword">global</span> a2; <span class="comment">%lunghezza del secondo braccio</span>
+<span class="keyword">global</span> a3; <span class="comment">% lunghezza del terzo braccio</span>
+
+<span class="comment">%Connessione alla Raspberry pi 3</span>
+
+set(handles.ConnectionText, <span class="string">'String'</span>, <span class="string">'Not Connected'</span>);
+set(handles.ConnectionText, <span class="string">'ForegroundColor'</span>, <span class="string">'White'</span>);
+
+<span class="keyword">if</span>(not(piConnected))
+    <span class="keyword">try</span>
+        pi = raspi(<span class="string">'169.254.186.98'</span>,<span class="string">'pi'</span>,<span class="string">'raspberry'</span>);
+        set(handles.ConnectionText, <span class="string">'String'</span>, <span class="string">'Connection Established'</span>);
+        set(handles.ConnectionText, <span class="string">'ForegroundColor'</span>, <span class="string">'Green'</span>);
+        set(handles.errText, <span class="string">'String'</span>, <span class="string">'No Errors'</span>);
+
+
+        <span class="comment">% Dichiarazione variabili/pin di collegamento</span>
+        MotoreSpalla.(<span class="string">'dir'</span>) = 20;
+        MotoreSpalla.(<span class="string">'step'</span>) = 21;
+
+        MotoreGomito.(<span class="string">'dir'</span>) = 23;
+        MotoreGomito.(<span class="string">'step'</span>) = 24;
+
+        MotorePolso.(<span class="string">'dir'</span>) = 5;
+        MotorePolso.(<span class="string">'step'</span>) = 6;
+
+        finecorsa = [25 26 27];
+
+        MS = [14 15 18];
+
+        a2 = 10;
+        a3 = 12;
+
+        <span class="comment">% configurazione dei pin della raspberry</span>
+        configurePin(pi,MotoreSpalla.(<span class="string">'dir'</span>),<span class="string">'DigitalOutput'</span>);
+        configurePin(pi,MotoreSpalla.(<span class="string">'step'</span>),<span class="string">'DigitalOutput'</span>);
+
+        configurePin(pi,MotoreGomito.(<span class="string">'dir'</span>),<span class="string">'DigitalOutput'</span>);
+        configurePin(pi,MotoreGomito.(<span class="string">'step'</span>),<span class="string">'DigitalOutput'</span>);
+
+        configurePin(pi,MotorePolso.(<span class="string">'dir'</span>),<span class="string">'DigitalOutput'</span>);
+        configurePin(pi,MotorePolso.(<span class="string">'step'</span>),<span class="string">'DigitalOutput'</span>);
+
+        <span class="comment">%configurazione dei pin di fine corsa</span>
+        configurePin(pi,finecorsa(1),<span class="string">'DigitalInput'</span>);
+        configurePin(pi,finecorsa(2),<span class="string">'DigitalInput'</span>);
+        configurePin(pi,finecorsa(3),<span class="string">'DigitalInput'</span>);
+
+        <span class="comment">% configurazione pin dell'angolo di passo</span>
+        configurePin(pi,MS(1),<span class="string">'DigitalOutput'</span>);
+        configurePin(pi,MS(2),<span class="string">'DigitalOutput'</span>);
+        configurePin(pi,MS(3),<span class="string">'DigitalOutput'</span>);
+
+
+        <span class="comment">% impostazione dell'angolo di passo - in questo caso (0 0 0) &egrave; in</span>
+        <span class="comment">% full step</span>
+        writeDigitalPin(pi,MS(1),1);
+        writeDigitalPin(pi,MS(2),1);
+        writeDigitalPin(pi,MS(3),0);
+        stepAngle = 1.8/8;
+        delay = 3/(200*1.8/stepAngle);
+
+        piConnected = true;
+    <span class="keyword">catch</span> exception
+
+        set(handles.ConnectionText, <span class="string">'String'</span>, <span class="string">'Connection NOT Established'</span>);
+        set(handles.ConnectionText, <span class="string">'ForegroundColor'</span>, <span class="string">'Red'</span>);
+        piConnected = false;
+
+        errorMsgText = getReport(exception, <span class="string">'basic'</span>);
+        set(handles.errText, <span class="string">'String'</span>, errorMsgText);
+
+    <span class="keyword">end</span>
+<span class="keyword">else</span>
+    set(handles.errText, <span class="string">'String'</span>, <span class="string">'ERROR: Connnessione gi&agrave; stabilita -&gt; la connessione con il dispositivo &egrave; gia avvenuta'</span>);
+<span class="keyword">end</span>
+</pre><h2 id="36">richiamata quando viene premuto il pulsante di calibrazione dei motori</h2><pre class="codeinput"><span class="keyword">function</span> CalibraMotoriButton_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CalibraMotoriButton (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="keyword">global</span> piConnected;
+
+<span class="keyword">if</span>(piConnected)
+    calibraMotori();
+<span class="keyword">else</span>
+    set(handles.errText,<span class="string">'String'</span>,<span class="string">'ERROR: Raspberry non connessa -&gt; bisogna connettere la raspberry per poter effettuare la calibrazione dei motori.'</span>);
+<span class="keyword">end</span>
+
+
+
+
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FUNZIONI NON</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UTILIZZATE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+
+<span class="comment">% --- Executes when figure1 is resized.</span>
+<span class="keyword">function</span> figure1_SizeChangedFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to figure1 (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+
+
+<span class="keyword">function</span> Theta1edit_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to Theta1edit (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of Theta1edit as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of Theta1edit as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> Theta1edit_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to Theta1edit (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> Theta2edit_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to Theta2edit (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of Theta2edit as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of Theta2edit as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> Theta2edit_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to Theta2edit (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> Theta3edit_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to Theta3edit (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of Theta3edit as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of Theta3edit as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> Theta3edit_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to Theta3edit (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+<span class="keyword">function</span> CordinataX_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CordinataX (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of CordinataX as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of CordinataX as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> CordinataX_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CordinataX (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> CordinataY_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CordinataY (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of CordinataY as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of CordinataY as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> CordinataY_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CordinataY (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> CordinataZ_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CordinataZ (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of CordinataZ as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of CordinataZ as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> CordinataZ_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to CordinataZ (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function varargout = RoboticArm3Dof(varargin)
+% ROBOTICARM3DOF MATLAB code for RoboticArm3Dof.fig
+%      ROBOTICARM3DOF, by itself, creates a new ROBOTICARM3DOF or raises the existing
+%      singleton*.
+%
+%      H = ROBOTICARM3DOF returns the handle to a new ROBOTICARM3DOF or the handle to
+%      the existing singleton*.
+%
+%      ROBOTICARM3DOF('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in ROBOTICARM3DOF.M with the given input arguments.
+%
+%      ROBOTICARM3DOF('Property','Value',...) creates a new ROBOTICARM3DOF or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before RoboticArm3Dof_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to RoboticArm3Dof_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help RoboticArm3Dof
+
+% Last Modified by GUIDE v2.5 17-Aug-2018 13:20:15
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @RoboticArm3Dof_OpeningFcn, ...
+                   'gui_OutputFcn',  @RoboticArm3Dof_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+%% REPLACE_WITH_DASH_DASH- Funzione di apertura. viene cariata prima ancora che RoboticArm3Dof inizi
+function RoboticArm3Dof_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to RoboticArm3Dof (see VARARGIN)
+ global piConnected
+ piConnected = false;
+ 
+ global oldTheta;
+ oldTheta = [ 0 0 0];
+ 
+open('simulazioneBraccio');
+% Choose default command line output for RoboticArm3Dof
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes RoboticArm3Dof wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+%% funzione necessaria per la calibrazione iniziale dei motori
+function calibraMotori() %REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHCalibrazione motoriREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+global oldTheta;
+global finecorsa;
+global pi;
+global MotoreSpalla;
+global MotoreGomito;
+global MotorePolso;
+global stepAngle;
+
+writeDigitalPin(pi,MotoreSpalla.('dir'),1);
+writeDigitalPin(pi,MotoreGomito.('dir'),0);
+writeDigitalPin(pi,MotorePolso.('dir'),0);
+
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHtrovo un punto conosciuto per il polsoREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+while(readDigitalPin(pi,finecorsa(3))~=0)
+    stepMotore(pi,MotorePolso.('step'));
+end
+disp('raggiunto fine polso');
+pause(1);
+
+writeDigitalPin(pi,MotorePolso.('dir'),1);
+for i=0:int16(55/stepAngle) 
+    stepMotore(pi,MotorePolso.('step'));
+end
+
+pause(2);
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHtrovo un punto conosciuto per il gomitoREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+while(readDigitalPin(pi,finecorsa(2))~=0)
+    stepMotore(pi,MotoreGomito.('step'));
+end
+disp('raggiunto fine gomito');
+pause(1);
+
+writeDigitalPin(pi,MotoreGomito.('dir'),1);
+for i=0:int16(65/stepAngle) 
+    stepMotore(pi,MotoreGomito.('step'));
+end
+for i=0:int16(90/stepAngle) 
+    stepMotore(pi,MotorePolso.('step'));
+end
+
+pause(2);
+
+
+
+%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHtrovo un punto conosciuto della struttura di base - spallaREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+while(readDigitalPin(pi,finecorsa(1))~=0)
+    stepMotore(pi,MotoreSpalla.('step'));
+end
+disp('raggiunto fine base');
+pause(1)
+%riporto la base alla posizione 0
+writeDigitalPin(pi,MotoreSpalla.('dir'),0);
+for i=0:int16(180/stepAngle) 
+    stepMotore(pi,MotoreSpalla.('step'));
+end
+
+disp('fine calibrazione');
+
+oldTheta = [0 0 0]; % posizione iniziale dei motori
+
+settaAngoliSimulazione(0,0,0);
+
+
+
+% REPLACE_WITH_DASH_DASH- Outputs from this function are returned to the command line.
+function varargout = RoboticArm3Dof_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+%% REPLACE_WITH_DASH_DASH- Sposta i motori verso le cordinate XYZ descritte nello stesso pannello
+function SpostaButton_Callback(hObject, eventdata, handles)
+% hObject    handle to SpostaButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global a2;
+global a3;
+global oldTheta;
+global piConnected;
+a2 = 10;
+a3 = 12;
+
+%prendo i valori delle entry
+newX = get(handles.CordinataX,'String');
+newY = get(handles.CordinataY,'String');
+newZ = get(handles.CordinataZ,'String');
+
+newPoint = [ str2double(newX)  str2double(newY)  -str2double(newZ)]; %scrive il nuovo punto in cui spostarsi
+
+checkNAN = isnan(newPoint); % serve a determinare se nel nuovo punto ci sono solo numeri
+
+%controllo e scrivo i valori nel nuovo punto da raggiungere
+if(not(piConnected))
+    
+    set(handles.errText,'String','ERROR: Connessione non stabilita -> Devi connettere la raspberry al computer per poter impostare dei valori');
+
+elseif checkNAN==0 % determina se sono tutti numeri
+    set(handles.errText,'String', 'Error Text'); 
+    
+   %CINEMATICA INVERSA
+   try
+        c3= (newPoint(1)^2 + newPoint(2)^2 + newPoint(3)^2 - a2^2 - a3^2)/(2*a2*a3);
+        s3= sqrt(1 - c3^2);
+        s2=((a2+a3*c3)*newPoint(3) - a3*s3*sqrt(newPoint(1)^2 + newPoint(2)^2))/(newPoint(1)^2 + newPoint(2)^2 + newPoint(3)^2);
+        c2=((a2+a3*c3)* sqrt(newPoint(1)^2 + newPoint(2)^2) + a3 * s3 *newPoint(3))/(newPoint(1)^2 + newPoint(2)^2 + newPoint(3)^2);
+
+        theta1Radians = atan2(newPoint(2),newPoint(1));
+        theta3Radians = atan2(s3,c3);
+        theta2Radians = atan2(s2,c2);
+
+        theta1Deg = rad2deg(theta1Radians);
+        theta2Deg = rad2deg(theta2Radians);
+        theta3Deg = rad2deg(theta3Radians);
+
+        newTheta = [ theta1Deg theta2Deg theta3Deg ];
+        
+        differenzaTheta = newTheta - oldTheta;
+        muoviMotori(differenzaTheta);
+
+        %stampo i valori corrente sull'interfaccia grafica
+        set(handles.teorTheta1,'String', newTheta(1));
+        set(handles.teorTheta2,'String', newTheta(2));
+        set(handles.teorTheta3,'String', newTheta(3));
+
+        set(handles.teorX,'String', newPoint(1));
+        set(handles.teorY,'String', newPoint(2));
+        set(handles.teorZ,'String', newPoint(3));
+        
+        settaCurrentValues(handles, differenzaTheta);
+        
+        settaErr(handles);
+        
+        %cambia la simulazione per vedere se il punto nello spazio
+        %corrisponde a quello reale
+        
+        settaAngoliSimulazione(theta1Radians,theta2Radians,theta3Radians);
+        
+    catch 
+        
+        errorMsgText = 'ERROR: punto irraggiungibile -> punto fuori dallo spazio di lavoro del braccio';
+        set(handles.errText, 'String', errorMsgText);
+    end
+    
+else
+    set(handles.errText,'String','ERROR: valore non numerico -> devi mettere valori numerici entro le caselle: X Y Z');
+end
+
+
+%% REPLACE_WITH_DASH_DASH- Imposta i valori dei theta a quelli decritti e sposta il motore
+% verso quel punto
+function ImpostaButton_Callback(hObject, eventdata, handles)
+% hObject    handle to ImpostaButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+global oldTheta;
+global piConnected;
+
+newTheta1 = get(handles.Theta1edit, 'String');
+newTheta2 = get(handles.Theta2edit, 'String');
+newTheta3 = get(handles.Theta3edit, 'String');
+
+newTheta = [ str2double(newTheta1)  str2double(newTheta2)  str2double(newTheta3)]; %scrive il nuovo punto in cui spostarsi
+
+checkNAN = isnan(newTheta); % controlla se nella conversione dei numeri c'è un NotANumber ovvero non è un numero
+
+if(not(piConnected))
+    
+    set(handles.errText,'String','ERROR: Connessione non stabilita -> Devi connettere la raspberry al computer per poter impostare dei valori');
+
+elseif  checkNAN==0  % determina se sono tutti numeri
+    checkSpace = newTheta(1)>=-180 && newTheta(1)<= 180 && newTheta(2)>=-225 && newTheta(2)<= 45 && newTheta(3)>=-135 && newTheta(3)<= 135; % controlla chje gli angoli sianop fra 360 e -360
+    if checkSpace
+        set(handles.errText,'String', 'Error Text'); 
+
+       thetaDifference = newTheta - oldTheta;
+       muoviMotori(thetaDifference); % fa muovere i morori grazie alla differenza degli angoli
+
+        %stampo il valore corrente sull'interfaccia grafica
+        set(handles.teorTheta1,'String', newTheta(1));
+        set(handles.teorTheta2,'String', newTheta(2));
+        set(handles.teorTheta3,'String', newTheta(3));
+        
+        %setta gli angoli della simulaizione del braccio
+        settaAngoliSimulazione(newTheta(1)*2*pi/360, newTheta(2)*2*pi/360,newTheta(3)*2*pi/360);
+        
+        %scrive i valori del punto raggiunto in teoria sulla gui
+        settaPuntoXYZ(handles,newTheta,'teor')
+        
+        %setta i valori correnti sulla gui
+        settaCurrentValues(handles,thetaDifference);
+        
+        %setta i valori degli errori sulla gui
+        settaErr(handles);
+        
+    else
+        set(handles.errText,'String','ERROR: Bound superato -> il valore dei theta deve essere compreso fra i -180 e 180 gradi per theta1, -225 e 45 per theta2 e -90 e 90 per theta3.');
+    end
+else
+    set(handles.errText,'String','ERROR: valore non numerico -> devi mettere valori numerici entro le caselle: Theta1 Theta2 Theta3');
+end
+
+%% scrive i valori correnti degli angoli correnti sulla gui
+function settaCurrentValues(handles,thetaDifference)
+global stepAngle;
+global oldTheta;
+
+%calcolo numero degli step
+numStep = int16(thetaDifference/stepAngle);
+
+% trovo gli angoli finali correnti
+finalTheta = oldTheta + (double(numStep)*stepAngle);
+disp(numStep);
+disp(finalTheta);
+% setto i valori degli angoli su schermo
+set(handles.currTheta1,'String',finalTheta(1));
+set(handles.currTheta2,'String',finalTheta(2));
+set(handles.currTheta3,'String',finalTheta(3));
+
+% aggiorno il valore di old theta
+oldTheta = finalTheta;
+%infine calcolo i valori finali correnti dei punti
+settaPuntoXYZ(handles, finalTheta,'curr')
+
+%% setta valori correnti o teorici sulla gui in base al tipo passato
+function settaPuntoXYZ(handles,theta, tipo)
+global a2;
+global a3;
+
+theta = theta * 2*pi /360;
+
+x = cos(theta(1))*(a2*cos(theta(2)) + a3 *cos(theta(2)+theta(3)));
+y = sin(theta(1))*(a2*cos(theta(2)) + a3 *cos(theta(2)+theta(3)));
+z = a2* sin(theta(2)) + a3 * sin(theta(2)+theta(3));
+
+if(strcmp(tipo,'teor'))
+    
+    set(handles.teorX,'String', x);
+    set(handles.teorY,'String', y);
+    set(handles.teorZ,'String', z);
+    
+elseif(strcmp(tipo,'curr'))
+    
+    set(handles.currX,'String', x);
+    set(handles.currY,'String', y);
+    set(handles.currZ,'String', z);
+    
+else
+    set(handles.errText, 'String', 'ERRORE: tipo non specificato -> la tipologia di dato potrebbe non essere stata specificata correttamente nel codice o potrebbe essere assente');    
+end
+
+%% setta gli errori sulla gui
+function settaErr(handles)
+
+    % prendo i valori correnti da quelli stampati su schermo
+    currTheta = [str2double(get(handles.currTheta1,'String')) str2double(get(handles.currTheta2,'String')) str2double(get(handles.currTheta3,'String'))];
+    currXYZ = [str2double(get(handles.currX,'String')) str2double(get(handles.currY,'String')) str2double(get(handles.currZ,'String'))];
+    teorTheta = [str2double(get(handles.teorTheta1,'String')) str2double(get(handles.teorTheta2,'String')) str2double(get(handles.teorTheta3,'String'))];
+    teorXYZ = [str2double(get(handles.teorX,'String')) str2double(get(handles.teorY,'String')) str2double(get(handles.teorZ,'String'))];
+    
+    %calcolo la differenza (il valore di riferimento è quello teorico, ovviamente)
+    finalErrTheta = currTheta - teorTheta;
+    finalErrXYZ = currXYZ - teorXYZ;
+    
+    %stampo gli errori su schermo
+    set(handles.errTheta1,'String',finalErrTheta(1));
+    set(handles.errTheta2,'String',finalErrTheta(2));
+    set(handles.errTheta3,'String',finalErrTheta(3));
+    set(handles.errX,'String',finalErrXYZ(1));
+    set(handles.errY,'String',finalErrXYZ(2));
+    set(handles.errZ,'String',finalErrXYZ(3));
+    
+    %scrivo i dati degli errori su due file per le statistiche
+    
+    %errori di theta 
+    fidTheta = fopen('thetaErrors.txt','a+');
+    fprintf(fidTheta,'%3.4f\t%3.4f\t%3.4f\n',finalErrTheta(1),finalErrTheta(2),finalErrTheta(3));
+    fclose(fidTheta);
+    
+    %errori di XYZ
+    fidXYZ = fopen('xyzErrors.txt','a+');
+    fprintf(fidXYZ,'%3.4f\t%3.4f\t%3.4f\n',finalErrXYZ(1),finalErrXYZ(2),finalErrXYZ(3));
+    fclose(fidXYZ);
+    
+%% setta gli angoli del braccio che sta sulla simulazione grazie agli angoli in radianti precedentemente scelti
+function settaAngoliSimulazione(theta1Radians,theta2Radians,theta3Radians)
+        set_param('simulazioneBraccio/theta1','Value',num2str(theta1Radians));
+        set_param('simulazioneBraccio/theta2','Value',num2str(theta2Radians));
+        set_param('simulazioneBraccio/theta3','Value',num2str(theta3Radians));
+        
+        sim('simulazioneBraccio');
+   
+%% muove i motori grazie al calcolo della differenza fra angoli correnti e
+% nuovi
+function muoviMotori(thetaDifference)
+global pi;
+global MotoreSpalla;
+global MotoreGomito;
+global MotorePolso;
+global stepAngle;
+
+
+numStep = int16(thetaDifference / stepAngle);
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-impostazione direzione motoreREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% MOTORE BASE
+if numStep(1)>=0
+    writeDigitalPin(pi,MotoreSpalla.('dir'),1);
+else
+    numStep(1) = -numStep(1);
+    writeDigitalPin(pi,MotoreSpalla.('dir'),0);
+end
+
+% MOTORE GOMITO
+if numStep(2)>=0
+    writeDigitalPin(pi,MotoreGomito.('dir'),0);
+else
+    numStep(2) = -numStep(2);
+    writeDigitalPin(pi,MotoreGomito.('dir'),1);
+end
+
+% MOTORE POLSO
+if numStep(3)>=0
+    writeDigitalPin(pi,MotorePolso.('dir'),1);
+else
+    numStep(3) = -numStep(3);
+    writeDigitalPin(pi,MotorePolso.('dir'),0);
+end
+pause(1);
+% % REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Spostamento motori non contemporaneoREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% %spostamento motore
+%  for i=0:numStep(1)
+%      stepMotore(pi,MotoreSpalla.('step'));
+%  end
+% 
+% %spostamento motore
+% for i=0:numStep(2)
+%     stepMotore(pi,MotoreGomito.('step'));
+% end
+% 
+% %spostamento motore
+% for i=0:numStep(3)
+%     stepMotore(pi,MotorePolso.('step'));
+% end
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHmovimento dei motori in contemporaneaREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+while (numStep(1)~=0 || numStep(2)~=0 || numStep(3) ~= 0)
+    if numStep(1) ~= 0
+        stepMotore(pi,MotoreSpalla.('step'));
+        numStep(1)= numStep(1)-1;
+    end
+    if numStep(2) ~= 0
+        stepMotore(pi,MotoreGomito.('step'));
+        numStep(2) = numStep(2)-1;
+    end
+    if numStep(3) ~= 0
+        stepMotore(pi,MotorePolso.('step'));
+        numStep(3) = numStep(3)-1;
+    end
+    disp(numStep)
+end
+
+
+%% manda un impulso al driver A4998 che equivale ad uno step del motore
+function stepMotore(pi,pinStep)
+   global delay
+   
+   writeDigitalPin(pi,pinStep,1);
+   pause(delay/12);
+   writeDigitalPin(pi,pinStep,0);
+   pause(delay/12);
+   
+   
+
+%% REPLACE_WITH_DASH_DASH- Permette la connessione fra raspberry e computer
+function RaspConnection_Callback(hObject, eventdata, handles)
+% hObject    handle to RaspConnection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+clear pi;
+
+global piConnected; % variabile d'appoggio per controllare se la raspberry è connessa
+global MS; % Array per decidere la modalità di stepping dello stepper motor
+global finecorsa; % array contenente i pin di collegamento dei sensori di finecorsa necessari alla calibrazione dei motori
+
+global MotoreSpalla;
+global MotoreGomito;
+global MotorePolso;
+
+global pi; % connessione alla raspberry
+global delay; %ritardo per step ovvero per creare l'impulso
+global stepAngle; % angolo di giro
+global a2; %lunghezza del secondo braccio
+global a3; % lunghezza del terzo braccio
+
+%Connessione alla Raspberry pi 3
+
+set(handles.ConnectionText, 'String', 'Not Connected');
+set(handles.ConnectionText, 'ForegroundColor', 'White');
+
+if(not(piConnected))
+    try
+        pi = raspi('169.254.186.98','pi','raspberry');
+        set(handles.ConnectionText, 'String', 'Connection Established');
+        set(handles.ConnectionText, 'ForegroundColor', 'Green');
+        set(handles.errText, 'String', 'No Errors');
+
+        
+        % Dichiarazione variabili/pin di collegamento
+        MotoreSpalla.('dir') = 20;
+        MotoreSpalla.('step') = 21;
+
+        MotoreGomito.('dir') = 23;
+        MotoreGomito.('step') = 24;
+
+        MotorePolso.('dir') = 5;
+        MotorePolso.('step') = 6;
+        
+        finecorsa = [25 26 27];
+
+        MS = [14 15 18];
+
+        a2 = 10;
+        a3 = 12;
+
+        % configurazione dei pin della raspberry
+        configurePin(pi,MotoreSpalla.('dir'),'DigitalOutput');
+        configurePin(pi,MotoreSpalla.('step'),'DigitalOutput');
+
+        configurePin(pi,MotoreGomito.('dir'),'DigitalOutput');
+        configurePin(pi,MotoreGomito.('step'),'DigitalOutput');
+
+        configurePin(pi,MotorePolso.('dir'),'DigitalOutput');
+        configurePin(pi,MotorePolso.('step'),'DigitalOutput');
+        
+        %configurazione dei pin di fine corsa
+        configurePin(pi,finecorsa(1),'DigitalInput');
+        configurePin(pi,finecorsa(2),'DigitalInput');
+        configurePin(pi,finecorsa(3),'DigitalInput');
+        
+        % configurazione pin dell'angolo di passo
+        configurePin(pi,MS(1),'DigitalOutput');
+        configurePin(pi,MS(2),'DigitalOutput');
+        configurePin(pi,MS(3),'DigitalOutput');
+        
+        
+        % impostazione dell'angolo di passo - in questo caso (0 0 0) è in
+        % full step 
+        writeDigitalPin(pi,MS(1),1);
+        writeDigitalPin(pi,MS(2),1);
+        writeDigitalPin(pi,MS(3),0);
+        stepAngle = 1.8/8;
+        delay = 3/(200*1.8/stepAngle);
+        
+        piConnected = true; 
+    catch exception
+
+        set(handles.ConnectionText, 'String', 'Connection NOT Established');
+        set(handles.ConnectionText, 'ForegroundColor', 'Red');
+        piConnected = false; 
+
+        errorMsgText = getReport(exception, 'basic');
+        set(handles.errText, 'String', errorMsgText);
+
+    end
+else
+    set(handles.errText, 'String', 'ERROR: Connnessione già stabilita -> la connessione con il dispositivo è gia avvenuta');
+end
+
+%% richiamata quando viene premuto il pulsante di calibrazione dei motori
+function CalibraMotoriButton_Callback(hObject, eventdata, handles)
+% hObject    handle to CalibraMotoriButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global piConnected;
+
+if(piConnected)
+    calibraMotori();  
+else
+    set(handles.errText,'String','ERROR: Raspberry non connessa -> bisogna connettere la raspberry per poter effettuare la calibrazione dei motori.');
+end
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FUNZIONI NON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%UTILIZZATE%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% REPLACE_WITH_DASH_DASH- Executes when figure1 is resized.
+function figure1_SizeChangedFcn(hObject, eventdata, handles)
+% hObject    handle to figure1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function Theta1edit_Callback(hObject, eventdata, handles)
+% hObject    handle to Theta1edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Theta1edit as text
+%        str2double(get(hObject,'String')) returns contents of Theta1edit as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function Theta1edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Theta1edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function Theta2edit_Callback(hObject, eventdata, handles)
+% hObject    handle to Theta2edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Theta2edit as text
+%        str2double(get(hObject,'String')) returns contents of Theta2edit as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function Theta2edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Theta2edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function Theta3edit_Callback(hObject, eventdata, handles)
+% hObject    handle to Theta3edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of Theta3edit as text
+%        str2double(get(hObject,'String')) returns contents of Theta3edit as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function Theta3edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to Theta3edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function CordinataX_Callback(hObject, eventdata, handles)
+% hObject    handle to CordinataX (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of CordinataX as text
+%        str2double(get(hObject,'String')) returns contents of CordinataX as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function CordinataX_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to CordinataX (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function CordinataY_Callback(hObject, eventdata, handles)
+% hObject    handle to CordinataY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of CordinataY as text
+%        str2double(get(hObject,'String')) returns contents of CordinataY as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function CordinataY_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to CordinataY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function CordinataZ_Callback(hObject, eventdata, handles)
+% hObject    handle to CordinataZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of CordinataZ as text
+%        str2double(get(hObject,'String')) returns contents of CordinataZ as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function CordinataZ_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to CordinataZ (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+
+##### SOURCE END #####
+--></body></html>
